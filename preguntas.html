@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d2930">
+<title>Primer día · 3.º ESO · Campo de Tejada</title>
+<style>
+:root{
+  --ink:#f6f3e8;--muted:#c8d1cb;--line:rgba(255,255,255,.14);
+  --gold:#e8b768;--panel:rgba(7,25,25,.72);--panel2:rgba(255,255,255,.055);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-width:320px;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:#0d2930}
+body{overflow-x:hidden}
+button{font:inherit}
+#p5-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.shell{position:relative;z-index:1;width:min(1500px,calc(100% - 18px));margin:9px auto 18px}
+.glass{border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(14px)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:15px 18px;border-radius:18px;margin-bottom:10px}
+.eyebrow{margin:0 0 5px;color:var(--gold);font-size:.72rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.7rem,3vw,2.65rem);font-weight:500;line-height:1}
+.brand>p:last-child{margin:6px 0 0;color:var(--muted);font-size:.88rem}
+.btn{min-height:42px;border:1px solid var(--line);border-radius:12px;padding:0 14px;background:rgba(255,255,255,.08);color:var(--ink);font-weight:850;cursor:pointer}
+.btn:hover{background:rgba(255,255,255,.14)}
+.btn.primary{background:var(--gold);border-color:transparent;color:#17291f}
+.btn:focus-visible,.step-btn:focus-visible,.quick-prompts button:focus-visible,.town-mini button:focus-visible{outline:3px solid rgba(242,207,138,.68);outline-offset:2px}
+.main-card{border-radius:22px;padding:15px}
+.activity-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(330px,.75fr);gap:14px;min-height:650px}
+.question-panel,.counter-panel{border:1px solid var(--line);border-radius:18px;background:var(--panel2);padding:20px;min-width:0}
+.question-panel{display:flex;flex-direction:column}
+.question-kicker{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.question-index{color:var(--muted);font-size:.78rem;font-weight:800}
+.question-text{margin:auto 0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem,4.2vw,4.5rem);line-height:1.06;letter-spacing:-.026em;max-width:960px;text-wrap:balance}
+.question-actions{display:flex;gap:8px;flex-wrap:wrap}
+.quick-prompts{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.quick-prompts button{min-height:34px;border:1px solid var(--line);border-radius:999px;padding:0 11px;background:rgba(255,255,255,.06);color:var(--muted);font-size:.74rem;font-weight:800;cursor:pointer}
+.quick-prompts button:hover{color:var(--ink);background:rgba(255,255,255,.11)}
+.counter-panel{display:flex;flex-direction:column}
+.counter-title{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:1.85rem;font-weight:500}
+.counter-sub{margin:5px 0 16px;color:var(--muted);font-size:.84rem;line-height:1.45}
+.town-poll{display:grid;gap:13px}
+.poll-row{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center}
+.poll-label{display:flex;justify-content:space-between;gap:8px;font-weight:850;margin-bottom:6px}
+.poll-track{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.poll-fill{height:100%;border-radius:inherit;background:var(--town-color);transition:width .3s ease}
+.poll-step{display:flex;gap:4px}
+.step-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.08);color:var(--ink);font-size:1.15rem;font-weight:900;cursor:pointer}
+.step-btn:hover{background:rgba(255,255,255,.14)}
+.counter-total{margin-top:auto;padding-top:17px;border-top:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.counter-total span{color:var(--muted);font-size:.82rem}
+.counter-total strong{font-size:4rem;line-height:.8;font-variant-numeric:tabular-nums;color:var(--gold)}
+.counter-actions{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap}.counter-actions .btn{flex:1;min-width:130px}
+.town-mini{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:14px}
+.town-mini button{min-height:40px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.05);color:var(--ink);font-size:.76rem;font-weight:800;cursor:pointer}
+.town-mini button[data-active="true"]{border-color:var(--town-color);box-shadow:inset 0 0 0 1px var(--town-color)}
+footer{display:flex;justify-content:space-between;gap:14px;padding:9px 5px 0;color:rgba(255,255,255,.63);font-size:.72rem;flex-wrap:wrap}
+@media(max-width:980px){.activity-grid{grid-template-columns:1fr;min-height:0}.question-panel{min-height:430px}.counter-panel{min-height:430px}}
+@media(max-width:620px){.shell{width:calc(100% - 8px);margin-top:4px}.topbar{align-items:flex-start;display:grid}.topbar .btn{width:100%}.main-card{padding:7px}.question-panel,.counter-panel{padding:15px}.question-text{font-size:clamp(1.7rem,8vw,3rem)}.town-mini{grid-template-columns:1fr}.question-actions .btn{flex:1;min-width:130px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/p5@2.3.3/lib/p5.min.js"></script>
+</head>
+<body>
+<div id="p5-bg" aria-hidden="true"></div>
+<main class="shell">
+  <header class="topbar glass">
+    <div class="brand">
+      <p class="eyebrow">IES Campo de Tejada · 3.º ESO · 2026–2027</p>
+      <h1>Nos conocemos</h1>
+      <p>Preguntas para romper el hielo y descubrir de dónde viene nuestro grupo.</p>
+    </div>
+    <button id="fullscreenBtn" class="btn" type="button">⛶ Pantalla completa</button>
+  </header>
+
+  <section class="main-card glass" aria-label="Taller del primer día">
+    <div class="activity-grid">
+      <section class="question-panel">
+        <div class="question-kicker">
+          <p class="eyebrow">Pregunta para el grupo</p>
+          <span id="questionIndex" class="question-index"></span>
+        </div>
+        <p id="questionText" class="question-text" aria-live="polite"></p>
+        <div class="question-actions">
+          <button id="prevQuestion" class="btn" type="button">← Anterior</button>
+          <button id="randomQuestion" class="btn primary" type="button">🎲 Otra pregunta</button>
+          <button id="nextQuestion" class="btn" type="button">Siguiente →</button>
+        </div>
+        <div id="quickPrompts" class="quick-prompts" aria-label="Tipos de preguntas"></div>
+      </section>
+
+      <aside class="counter-panel">
+        <p class="eyebrow">¿De dónde somos?</p>
+        <h2 class="counter-title">Contador de la clase</h2>
+        <p class="counter-sub">Que levanten la mano. Pulsa + por cada alumno/a de cada pueblo. El total se actualiza al instante.</p>
+        <div id="townPoll" class="town-poll"></div>
+        <div class="counter-total"><span>Total del grupo</span><strong id="pollTotal">0</strong></div>
+        <div class="counter-actions"><button id="resetPoll" class="btn" type="button">↺ Poner a cero</button></div>
+        <div id="townMini" class="town-mini" aria-label="Destacar un pueblo en el paisaje"></div>
+      </aside>
+    </div>
+  </section>
+  <footer><span>3.º ESO · IES Campo de Tejada</span><span>Chucena · Escacena del Campo · Manzanilla · Paterna del Campo</span></footer>
+</main>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+
+const towns=[
+ {id:'chucena',name:'Chucena',color:'#75AFA5'},
+ {id:'escacena',name:'Escacena del Campo',color:'#9EB66B'},
+ {id:'manzanilla',name:'Manzanilla',color:'#D98E63'},
+ {id:'paterna',name:'Paterna del Campo',color:'#E8B768'}
+];
+
+const questions=[
+ '¿De qué pueblo eres y qué es lo que más te gusta de vivir allí?',
+ '¿Qué lugar de tu pueblo enseñarías a alguien que llega por primera vez?',
+ '¿Qué tradición, fiesta o costumbre representa mejor a tu pueblo?',
+ '¿Qué esperas que pase este curso para decir en junio: “ha sido un buen año”?',
+ '¿Qué asignatura te despierta más curiosidad este año y por qué?',
+ '¿Qué se te da bien y podrías aportar al grupo?',
+ '¿Qué necesitas de tus compañeros para sentirte cómodo/a en clase?',
+ '¿Qué norma crees que debería ser imprescindible para que la clase funcione bien?',
+ '¿Qué tienen en común Chucena, Escacena, Manzanilla y Paterna?',
+ 'Si tu clase tuviera un lema para este curso, ¿cuál propondrías?',
+ '¿Qué rincón del Campo de Tejada debería conocer todo el grupo?',
+ '¿Qué te gustaría aprender este año que no aparezca necesariamente en un libro?'
+];
+const quick=[['Pueblo',0],['Curso',3],['Grupo',5],['Convivencia',7],['Campo de Tejada',8],['Curiosidad',11]];
+
+let questionIndex=0, selectedTown=null;
+let poll=Object.fromEntries(towns.map(t=>[t.id,0]));
+
+function loadState(){
+  try{
+    const s=JSON.parse(localStorage.getItem('campoTejadaPreguntas')||'{}');
+    if(Number.isInteger(s.questionIndex)) questionIndex=Math.max(0,Math.min(questions.length-1,s.questionIndex));
+    if(s.poll) poll={...poll,...s.poll};
+  }catch(_){}
+}
+function saveState(){
+  try{localStorage.setItem('campoTejadaPreguntas',JSON.stringify({questionIndex,poll}));}catch(_){}
+}
+function renderQuestion(){
+  questionIndex=(questionIndex+questions.length)%questions.length;
+  $('#questionText').textContent=questions[questionIndex];
+  $('#questionIndex').textContent=`Pregunta ${questionIndex+1} de ${questions.length}`;
+  saveState();
+}
+function renderQuick(){
+  const box=$('#quickPrompts');
+  box.innerHTML=quick.map(([label,index])=>`<button type="button" data-q="${index}">${label}</button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{questionIndex=Number(b.dataset.q);renderQuestion();}));
+}
+function renderPoll(){
+  const total=Object.values(poll).reduce((a,b)=>a+(Number(b)||0),0);
+  const wrap=$('#townPoll'); wrap.innerHTML='';
+  towns.forEach(t=>{
+    const value=Math.max(0,Number(poll[t.id])||0); poll[t.id]=value;
+    const pct=total?Math.round(value/total*100):0;
+    const row=document.createElement('div'); row.className='poll-row'; row.style.setProperty('--town-color',t.color);
+    row.innerHTML=`<div><div class="poll-label"><span>${t.name}</span><span>${value}</span></div><div class="poll-track"><div class="poll-fill" style="width:${pct}%"></div></div></div><div class="poll-step"><button class="step-btn" type="button" data-a="minus" aria-label="Quitar un alumno de ${t.name}">−</button><button class="step-btn" type="button" data-a="plus" aria-label="Añadir un alumno de ${t.name}">+</button></div>`;
+    row.querySelector('[data-a="minus"]').addEventListener('click',()=>{poll[t.id]=Math.max(0,poll[t.id]-1);renderPoll();saveState();});
+    row.querySelector('[data-a="plus"]').addEventListener('click',()=>{poll[t.id]++;renderPoll();saveState();});
+    wrap.appendChild(row);
+  });
+  $('#pollTotal').textContent=total;
+}
+function renderTownMini(){
+  const box=$('#townMini'); box.innerHTML='';
+  towns.forEach(t=>{
+    const b=document.createElement('button'); b.type='button'; b.textContent=t.name;
+    b.dataset.active=String(selectedTown===t.id); b.style.setProperty('--town-color',t.color);
+    b.addEventListener('click',()=>{selectedTown=selectedTown===t.id?null:t.id;renderTownMini();});
+    box.appendChild(b);
+  });
+}
+
+$('#prevQuestion').addEventListener('click',()=>{questionIndex--;renderQuestion();});
+$('#nextQuestion').addEventListener('click',()=>{questionIndex++;renderQuestion();});
+$('#randomQuestion').addEventListener('click',()=>{let n=questionIndex;while(n===questionIndex&&questions.length>1)n=Math.floor(Math.random()*questions.length);questionIndex=n;renderQuestion();});
+$('#resetPoll').addEventListener('click',()=>{poll=Object.fromEntries(towns.map(t=>[t.id,0]));renderPoll();saveState();});
+$('#fullscreenBtn').addEventListener('click',async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();}catch(_){}});
+
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) return;
+  if(e.key==='ArrowRight'){questionIndex++;renderQuestion();}
+  if(e.key==='ArrowLeft'){questionIndex--;renderQuestion();}
+  if(e.key===' '){e.preventDefault();$('#randomQuestion').click();}
+});
+
+new p5(p=>{
+  let particles=[];
+  const nodes=[
+    {id:'chucena',x:.18,y:.55,c:'#75AFA5'},
+    {id:'escacena',x:.40,y:.49,c:'#9EB66B'},
+    {id:'manzanilla',x:.62,y:.56,c:'#D98E63'},
+    {id:'paterna',x:.81,y:.48,c:'#E8B768'}
+  ];
+  p.setup=()=>{
+    const c=p.createCanvas(p.windowWidth,p.windowHeight); c.parent('p5-bg');
+    p.pixelDensity(Math.min(2,window.devicePixelRatio||1));
+    for(let i=0;i<60;i++) particles.push({x:p.random(p.width),y:p.random(p.height*.62),r:p.random(1,3),s:p.random(.04,.18),a:p.random(25,70)});
+  };
+  function sky(){
+    const ctx=p.drawingContext,g=ctx.createLinearGradient(0,0,0,p.height);
+    g.addColorStop(0,'#0d2930');g.addColorStop(.45,'#244943');g.addColorStop(.73,'#816c49');g.addColorStop(1,'#20382e');
+    ctx.fillStyle=g;ctx.fillRect(0,0,p.width,p.height);
+  }
+  function hill(y,amp,col,seed){
+    p.noStroke();p.fill(col);p.beginShape();p.vertex(0,p.height);p.vertex(0,y);
+    for(let x=0;x<=p.width+30;x+=30)p.vertex(x,y+p.noise(seed+x*.002)*amp);
+    p.vertex(p.width,p.height);p.endShape(p.CLOSE);
+  }
+  p.draw=()=>{
+    sky();const t=p.millis()*.00004;
+    p.noStroke();p.fill(247,190,105,35);p.circle(p.width*.80,p.height*.22,Math.min(p.width,p.height)*.24);
+    hill(p.height*.54,45,'rgba(32,64,53,.93)',10+t);hill(p.height*.67,68,'rgba(44,75,52,.96)',30+t);hill(p.height*.82,35,'rgba(30,54,37,1)',60+t);
+    p.stroke(232,183,104,22);for(let i=0;i<20;i++){const x0=p.map(i,0,19,-p.width*.15,p.width*1.08);p.line(x0,p.height,p.width*.54+(x0-p.width*.54)*.16,p.height*.68);}
+    nodes.forEach((n,i)=>{if(i<nodes.length-1){const b=nodes[i+1];p.stroke(255,255,255,23);p.line(n.x*p.width,n.y*p.height,b.x*p.width,b.y*p.height);}});
+    p.noStroke();particles.forEach(pt=>{pt.x+=pt.s;if(pt.x>p.width+8)pt.x=-8;p.fill(255,238,196,pt.a);p.circle(pt.x,pt.y,pt.r)});
+    nodes.forEach(n=>{const active=selectedTown===n.id,x=n.x*p.width,y=n.y*p.height,pulse=active?7+Math.sin(p.millis()*.006)*4:0;p.noStroke();p.fill(n.c+(active?'88':'44'));p.circle(x,y,34+pulse);p.fill(n.c);p.circle(x,y,9);if(active){p.noFill();p.stroke(n.c);p.strokeWeight(2);p.circle(x,y,50+pulse);}});
+  };
+  p.windowResized=()=>p.resizeCanvas(p.windowWidth,p.windowHeight);
+});
+
+loadState();renderQuick();renderQuestion();renderPoll();renderTownMini();
+</script>
+</body>
+</html>
